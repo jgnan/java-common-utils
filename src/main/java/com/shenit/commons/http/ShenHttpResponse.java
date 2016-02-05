@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.net.HttpHeaders;
 import com.shenit.commons.utils.ArrayUtils;
 import com.shenit.commons.utils.DataUtils;
-import com.shenit.commons.utils.GsonUtils;
-import com.shenit.commons.utils.URLUtils;
 import com.shenit.commons.utils.MapUtils;
 import com.shenit.commons.utils.ShenStringUtils;
 
@@ -112,12 +109,6 @@ public class ShenHttpResponse extends HashMap<String, List<String>>{
         return DataUtils.toInt(val(key),defaultVal);
     }
     
-    public static void main(String[] args) {
-        HttpURLConnection conn = URLUtils.openConnection("http://www.baidu.com");
-        ShenHttpResponse resp = new ShenHttpResponse(conn);
-        System.out.println(GsonUtils.toJson(resp.getCookie("H_PS_PSSID")));
-        IOUtils.close(conn);
-    }
     
     /**
      * Get header value as long
