@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.shenit.commons.utils.ArrayUtils;
 import com.shenit.commons.utils.DataUtils;
+import com.shenit.commons.utils.HttpUtils;
 import com.shenit.commons.utils.ShenStringUtils;
 
 /**
@@ -55,11 +56,11 @@ public class ShenHttpParam extends LinkedHashMap<String,List<Object>>{
             LOG.warn("[add] empty key");
             return this;
         }
+        if(!containsKey(key)) put(key,new ArrayList<>());
         if(ArrayUtils.isEmpty(vals)){
-            LOG.warn("[add] no value");
+            if(LOG.isInfoEnabled()) LOG.info("[add] no value to put, just add the key.");
             return this;
         }
-        if(!containsKey(key)) put(key,new ArrayList<>());
         List<Object> valList = get(key);
         for(Object val : vals) valList.add(val);
         return this;
@@ -75,6 +76,16 @@ public class ShenHttpParam extends LinkedHashMap<String,List<Object>>{
     }
     
     /**
+     * Get all objects to a specific key.
+     * @param key
+     * @return
+     */
+    public Object[] getAll(String key){
+        List<Object> result =get(key);
+        return result == null ? null : result.toArray();
+    }
+    
+    /**
      * Get header value, joined as a string with specific delimiter
      * @param key
      * @param delimiter
@@ -87,5 +98,27 @@ public class ShenHttpParam extends LinkedHashMap<String,List<Object>>{
         String[] headerVals = vals.stream()
             .map(val -> DataUtils.toString(val)).toArray(String[]::new);
         return ArrayUtils.isEmpty(headerVals) ? StringUtils.EMPTY : StringUtils.join(headerVals, delimiter);
+    }
+
+    /**
+     * To query string
+     * @return
+     */
+    public String toQuery() {
+        StringBuilder builder = new StringBuilder();
+        for(String key : keySet()){
+            Object[] vals = getAll(key);
+            if(ArrayUtils.isEmpty(vals)){
+                builder.append(key).append(HttpUtils.EQ);
+                builder.append(HttpUtils.AMP);
+                continue;
+            }
+            for(Object val : vals){
+                builder.append(key).append(HttpUtils.EQ).append(DataUtils.toString(val)).append(HttpUtils.AMP);
+            }
+        }
+        //remove last & character
+        if(builder.length() > 0) builder = builder.deleteCharAt(builder.length()-1);
+        return builder.toString();
     }
 }

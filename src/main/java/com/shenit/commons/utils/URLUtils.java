@@ -1,14 +1,16 @@
 package com.shenit.commons.utils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.Cookie;
 
@@ -59,7 +61,17 @@ public class URLUtils {
     public static HttpURLConnection openConnection(String location,Proxy proxy){
         return openConnection(location,ShenHttpMethod.Get,proxy);
     }
-    
+    /**
+     * Open connection with proxy and connection timeout.
+     * @param location Location
+     * @param proxy Proxy to use
+     * @param connectTimeout Connect time out to the website
+     * @param socketTimeout Socket timeout for proxy
+     * @return
+     */
+    public static HttpURLConnection openConnection(String location,ShenHttpMethod method,Proxy proxy, int connectTimeout, int socketTimeout){
+        return openConnection(url(location),method,null,null, proxy,connectTimeout, socketTimeout);
+    }
     /**
      * Open a url connection with location, method and proxy
      * @param location Location to open
@@ -116,7 +128,6 @@ public class URLUtils {
             conn = (HttpURLConnection) (proxy == null ? url.openConnection() : url.openConnection(proxy));
             conn.setConnectTimeout(connectTimeout);
             conn.setReadTimeout(readTimeout);
-            conn.setDoInput(true);
             conn.setRequestMethod(method.code);
             conn.setInstanceFollowRedirects(true); //follow redirect by default
             writerHeaders(conn,headers);
@@ -187,12 +198,68 @@ public class URLUtils {
     }
     
     /**
+     * Encode url with utf8
+     * @param string
+     * @return
+     */
+    public static String encode(String string){
+        if(StringUtils.isEmpty(string)) return null;
+        try {
+            return URLEncoder.encode(string,HttpUtils.ENC_UTF8);
+        }
+        catch (UnsupportedEncodingException e) {
+            LOG.warn("[encode] Could not encode url -> {}", string);
+        }
+        return null;
+    }
+    
+    /**
      * Write body to connection.
      * @param conn A HttpUrlConnection
      * @param params Body params
      * @return
      */
-    public static HttpURLConnection formData(HttpURLConnection conn, Map<String, List<Object>> form) {
+    public static HttpURLConnection formData(HttpURLConnection conn, ShenHttpParam form) {
+        if(MapUtils.isEmpty(form)) {
+            LOG.warn("[formData] No data input!");
+            return conn;
+        }
+        conn.setDoOutput(true);
+        IOStreamUtils.write(conn,form.toQuery());
+        return conn;
+    }
+    public static OutputStream out(URLConnection conn){
+        if(conn == null){
+            LOG.warn("[out] No connection given");
+            return null;
+        }
+        conn.setDoOutput(true);
+        try {
+            return conn.getOutputStream();
+        }
+        catch (IOException e) {
+            LOG.warn("[out] Could not get output stream due to exception", e);
+        }
+        return null;
+    }
+    
+    /**
+     * Get input stream from a connection
+     * @param conn
+     * @return
+     */
+    public static InputStream in(URLConnection conn) {
+        if(conn == null){
+            LOG.warn("[in] No connection given");
+            return null;
+        }
+        conn.setDoInput(true);
+        try {
+            return conn.getInputStream();
+        }
+        catch (IOException e) {
+            LOG.warn("[in] Could not get input stream due to exception", e);
+        }
         return null;
     }
 }

@@ -24,6 +24,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.CaseFormat;
 
@@ -33,6 +35,8 @@ import com.google.common.base.CaseFormat;
  *
  */
 public final class ShenStringUtils {
+    private static final Logger LOG = LoggerFactory.getLogger(ShenStringUtils.class);
+    
 	public static final String SPACE = " ";
 	public static final String DELIMITER_COMMA = ",";
 	public static final String DELIMITER_DOT = ".";
@@ -152,7 +156,7 @@ public final class ShenStringUtils {
     public static int indexOf(String str, String search) {
         return str == null ? -1 : str.indexOf(search);
     }
-
+    
     /**
      * 判断指定字符是否在特定字符串中
      * @param url 
@@ -221,5 +225,33 @@ public final class ShenStringUtils {
         }
         
         return pairs;
+    }
+    
+    /**
+     * Substring between given strings
+     * @param str String to operate
+     * @param begin Start string
+     * @param end End string
+     * @return
+     */
+    public static String between(String str, String... startEnd) {
+        return between(str,startEnd.length > 0 ? indexOf(str,startEnd[0]) + startEnd[0].length() : -1,  
+                        startEnd.length > 1 ?indexOf(str,startEnd[1]) : -1);
+    }
+    
+    /**
+     * Get string fragment between two index
+     * @param str String to operate
+     * @param startEnd Start and end index
+     * @return
+     */
+    public static String between(String str, int... startEnd) {
+        if(StringUtils.isEmpty(str)){
+            LOG.warn("[between] Illegal input");
+            return null;
+        }
+        if(startEnd.length > 0 && startEnd[0] > -1) str = str.substring(startEnd[0]);
+        if(startEnd.length > 1 && startEnd[1] > -1) str = str.substring(0,startEnd[1] - (startEnd[0] < 0 ? 0 : startEnd[0]));
+        return str;
     }
 }

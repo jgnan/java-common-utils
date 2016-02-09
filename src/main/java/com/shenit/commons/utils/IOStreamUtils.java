@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.function.Function;
 
@@ -39,8 +40,9 @@ public final class IOStreamUtils {
         }
         StringBuilder builder = new StringBuilder();
         try {
+            conn.setDoInput(true);
             readByLine(conn.getInputStream(),(line) -> {
-               builder.append(line);
+               builder.append(line).append(ShenStringUtils.LINE_SEPERATOR);
                return true;
             });
             
@@ -149,6 +151,27 @@ public final class IOStreamUtils {
         }
     }
     
+    /**
+     * Read stream as string
+     * @param is
+     * @return
+     */
+    public static final String readToString(InputStream is){
+        if(is == null) {
+            LOG.warn("[toString] Nothing to read");
+            return null;
+        }
+        try {
+            byte[] data = new byte[is.available()];
+            is.read(data);
+            return new String(data,HttpUtils.ENC_UTF8);
+        }
+        catch (IOException e) {
+            LOG.error("[readToString] Read with error.", e);
+        }
+        return StringUtils.EMPTY;
+    }
+    
     
     /**
      * Return a FileReader according to the fileLocation
@@ -209,5 +232,48 @@ public final class IOStreamUtils {
      */
     public static PrintWriter printWriter(OutputStream os) {
         return os == null ? null : new PrintWriter(os);
+    }
+
+    /**
+     * Write things to HttpURLConnection.
+     * This method won't close the writer for further usage.
+     * @param conn
+     * @param body
+     */
+    public static HttpURLConnection write(HttpURLConnection conn, String body) {
+        if(conn == null){
+            LOG.warn("[write] No connection");
+            return conn;
+        }
+        if(StringUtils.isEmpty(body)){
+            LOG.warn("[write] No content to write");
+            return conn;
+        }
+        conn.setDoOutput(true);
+        try {
+            conn.getOutputStream().write(body.getBytes(HttpUtils.ENC_UTF8));
+        } catch (IOException e) {
+            LOG.warn("[write] Could not write content to connection due to error", e);
+        }
+        return conn;
+    }
+
+    /**
+     * Read a line
+     * @param reader
+     * @return
+     */
+    public static String readLine(BufferedReader reader) {
+        if(reader == null){
+            LOG.warn("[readLine] No reader provided");
+            return null;
+        }
+        try {
+            return reader.readLine();
+        }
+        catch (IOException e) {
+            LOG.warn("[readLine] Could not read line due to exception", e);
+        }
+        return null;
     }
 }
