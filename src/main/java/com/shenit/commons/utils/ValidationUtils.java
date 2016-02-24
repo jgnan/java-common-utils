@@ -443,7 +443,7 @@ public final class ValidationUtils {
     public static boolean between(long target, long... ranges) {
         if(ranges.length == 0) return true;
         boolean check = target >= ranges[0];
-        if(ranges.length > 1) check =  check && target < ranges[1];
+        if(ranges.length > 1) check =  check && target <= ranges[1];
         return check;
     }
     

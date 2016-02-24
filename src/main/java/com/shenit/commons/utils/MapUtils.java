@@ -270,4 +270,11 @@ public final class MapUtils {
     public static boolean isEmpty(Map<?, ?> map) {
         return map == null || map.isEmpty();
     }
+    /**
+     * Clear map
+     * @param session
+     */
+    public static void clear(Map<?,?> map) {
+        if(map != null) map.clear();
+    }
 }

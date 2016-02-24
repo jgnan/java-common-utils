@@ -170,7 +170,7 @@ public class URLUtils {
             return conn;
         }
         if(MapUtils.isEmpty(headers)){
-            if (LOG.isInfoEnabled()) LOG.info("[writerHeaders] No headers input");
+            if (LOG.isDebugEnabled()) LOG.debug("[writerHeaders] No headers input");
             return conn;
         }
         conn.setDoOutput(true);
