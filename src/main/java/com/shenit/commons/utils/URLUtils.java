@@ -40,7 +40,7 @@ public class URLUtils {
      * @throws IOException
      */
     public static HttpURLConnection openConnection(String location,ShenHttpMethod method){
-        return openConnection(location,method,null);
+        return openConnection(location,method,null,null);
     }
     /**
      * Open a location with get method. 
@@ -49,7 +49,7 @@ public class URLUtils {
      * @throws IOException
      */
     public static HttpURLConnection openConnection(String location){
-        return openConnection(location,ShenHttpMethod.Get,null);
+        return openConnection(location,ShenHttpMethod.Get,null,null);
     }
     /**
      * Http url connection
@@ -72,6 +72,30 @@ public class URLUtils {
     public static HttpURLConnection openConnection(String location,ShenHttpMethod method,Proxy proxy, int connectTimeout, int socketTimeout){
         return openConnection(url(location),method,null,null, proxy,connectTimeout, socketTimeout);
     }
+    
+    /**
+     * Open connction with http method and headers
+     * @param location Location to open
+     * @param method Http method
+     * @param headers Headers for use
+     * @return
+     */
+    public static HttpURLConnection openConnection(String location,ShenHttpMethod method, ShenHttpParam headers){
+        return openConnection(location, method, headers,null,null,0,0);
+    }
+    
+    /**
+     * Open connction with http method and headers
+     * @param location Location to open
+     * @param method Http method
+     * @param headers Headers for use
+     * @param proxy Proxy to use
+     * @return
+     */
+    public static HttpURLConnection openConnection(String location,ShenHttpMethod method, ShenHttpParam headers,Proxy proxy){
+        return openConnection(location, method, headers,null,proxy,0,0);
+    }
+    
     /**
      * Open a url connection with location, method and proxy
      * @param location Location to open
@@ -147,7 +171,7 @@ public class URLUtils {
      */
     public static void writerCookies(HttpURLConnection conn, Cookie[] cookies) {
         if(ArrayUtils.isEmpty(cookies)){
-            LOG.warn("[writerCookies] No cookie input");
+            if(LOG.isDebugEnabled()) LOG.debug("[writerCookies] No cookie input");
             return;
         }
         String[] cookiesStr = Arrays.stream(cookies)
