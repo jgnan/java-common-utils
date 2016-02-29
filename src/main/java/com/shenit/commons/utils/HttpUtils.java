@@ -149,7 +149,25 @@ public final class HttpUtils {
      */
     public static long testProxy(Proxy proxy,String address){
         try {
-            return testProxy(proxy,new URL(address));
+            return testProxy(proxy,new URL(address),0,0);
+        }
+        catch (MalformedURLException e) {
+            LOG.warn("[testProxy] Could not parse url -> {}", address,e);
+        }
+        return -1;
+    }
+    
+    /**
+     * 测试代理类
+     * @param proxy
+     * @param address
+     * @param cTimeout 连接超时时间限制
+     * @param rTimeout 读取超时时间限制
+     * @return
+     */
+    public static long testProxy(Proxy proxy,String address,int cTimeout, int rTimeout){
+        try {
+            return testProxy(proxy,new URL(address),cTimeout,rTimeout);
         }
         catch (MalformedURLException e) {
             LOG.warn("[testProxy] Could not parse url -> {}", address,e);
@@ -1321,7 +1339,7 @@ public final class HttpUtils {
      *            Proxy
      * @param url
      */
-    public static long testProxy(Proxy proxy, URL url) {
+    public static long testProxy(Proxy proxy, URL url,int ctimeout,int rtimeout) {
         if (proxy == null) return -1;
         if (url == null) {
             try {
@@ -1337,6 +1355,8 @@ public final class HttpUtils {
             StopWatch watch = new StopWatch();
             watch.start();
             conn = url.openConnection(proxy);
+            if(ctimeout > 0) conn.setConnectTimeout(ctimeout);
+            if(rtimeout > 0) conn.setReadTimeout(rtimeout);
             conn.getInputStream(); // try to get input
             watch.stop();
             return watch.getTime();

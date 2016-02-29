@@ -33,6 +33,25 @@ public class URLUtils {
     public static final String COOKIE_PATTERN = "%s=%s; ";
     
     /**
+     * Open a location's url connection instance using GET method
+     * @param loc Location to visit
+     * @return
+     */
+    public static HttpURLConnection getConnection(String loc){
+        return getConnection(loc,null,null);
+    }
+    /**
+     * Open a location's url connection instance using GET method
+     * @param loc Location to visit
+     * @param headers Headers
+     * @param proxy Proxy to use
+     * @return
+     */
+    public static HttpURLConnection getConnection(String loc, ShenHttpParam headers,Proxy proxy){
+        return openConnection(loc, ShenHttpMethod.Get,headers, proxy);
+    }
+    
+    /**
      * Open a connection with the specific location and method
      * @param location Location to open.
      * @param method Http ethod
@@ -83,6 +102,7 @@ public class URLUtils {
     public static HttpURLConnection openConnection(String location,ShenHttpMethod method, ShenHttpParam headers){
         return openConnection(location, method, headers,null,null,0,0);
     }
+    
     
     /**
      * Open connction with http method and headers

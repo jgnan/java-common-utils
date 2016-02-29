@@ -25,6 +25,17 @@ package com.shenit.commons.utils;
  */
 public final class ConcurrencyUtils
 {
+    /**
+     * Sleep quite
+     * @param millis
+     */
+    public static void sleepQuite(long millis){
+        try {
+            Thread.sleep(millis);
+        }
+        catch (InterruptedException e) {
+        }
+    }
 	/**
 	 * 执行所有Runnable接口的run方法
 	 * @param tasks

@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.reflect.TypeToken;
+
+
 /**
  * Class工具类
  * @author folo 2015年4月21日下午2:15:57
@@ -64,4 +67,26 @@ public class ClassUtils {
 		}
 		return null;
 	}
+
+	/**
+	 * Cast an object to a specific class
+	 * @param obj
+	 * @param clazz
+	 */
+    public static <T> T cast(Object obj, Class<T> clazz) {
+        if(obj == null || clazz == null) return null;
+        return obj.getClass().isAssignableFrom(clazz) ? clazz.cast(obj) : null;
+    }
+    
+    
+    /**
+     * Cast an object to a specific type
+     * @param obj
+     * @param type Type with a class
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T cast(Object obj, TypeToken<T> type) {
+        if(obj == null || type == null) return null;
+        return obj == null || type == null ? null : (T) type.getRawType().cast(obj);
+    }
 }

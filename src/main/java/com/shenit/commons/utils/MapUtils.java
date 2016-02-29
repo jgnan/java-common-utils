@@ -147,6 +147,17 @@ public final class MapUtils {
         return result;
     }
     
+
+    /**
+     * 把Map的指定值转换为整型
+     * @param map
+     * @param key
+     * @return
+     */
+    public static <K,V> int getInt(Map<K,V> map,K key){
+        return getInt(map,key,0);
+    }
+    
     /**
      * 把Map的指定值转换为整型
      * @param map
@@ -277,4 +288,28 @@ public final class MapUtils {
     public static void clear(Map<?,?> map) {
         if(map != null) map.clear();
     }
+    
+
+    /**
+     * Get value as string
+     * @param map
+     * @param key
+     * @return
+     */
+    public static <K,V> String getString(Map<K,V> map, K key) {
+        return getString(map,key,null);
+    }
+    
+    /**
+     * Get value as string
+     * @param map
+     * @param key
+     * @param defaultVal
+     * @return
+     */
+    public static <K,V> String getString(Map<K,V> map, K key,String defaultVal) {
+        return DataUtils.toString(get(map,key),defaultVal);
+    }
+    
+    
 }
