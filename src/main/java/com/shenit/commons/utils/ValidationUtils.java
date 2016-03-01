@@ -465,5 +465,15 @@ public final class ValidationUtils {
 	   Matcher emojiMatcher = emoji.matcher(str);
        return emojiMatcher.find();
    }
+
+   /**
+    * Check whether value contains flag
+    * @param value Value to be checked 
+    * @param flag Flag to check with
+    * @return
+    */
+    public static boolean hasFlag(int value, int flag) {
+        return (value & flag) == flag;
+    }
    
 }

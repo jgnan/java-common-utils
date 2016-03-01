@@ -17,6 +17,12 @@
  **********************************************************************************************************************/
 package com.shenit.commons.utils;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * 并发编程工具.
@@ -25,6 +31,8 @@ package com.shenit.commons.utils;
  */
 public final class ConcurrencyUtils
 {
+    private static final Logger LOG = LoggerFactory.getLogger(ConcurrencyUtils.class);
+     
     /**
      * Sleep quite
      * @param millis
@@ -43,4 +51,28 @@ public final class ConcurrencyUtils
 	public static void runAll(Runnable... tasks){
 		for(Runnable task : tasks) task.run();
 	}
+	
+	/**
+     * Get value from future task.
+     * @param task
+     * @return
+     */
+	public static <V> V getFuture(FutureTask<V> task) {
+	    return getFuture(task,null);
+	}
+	/**
+	 * Get value from future task.
+	 * @param task
+	 * @param defaultVal Fallback when no value get from task.s
+	 * @return
+	 */
+    public static <V> V getFuture(FutureTask<V> task,V defaultVal) {
+        try {
+            return task == null ? null : task.get();
+        }
+        catch (InterruptedException | ExecutionException e) {
+            LOG.warn("[getFuture] Get future task result with exception.",e);
+        }
+        return defaultVal;
+    }
 }
