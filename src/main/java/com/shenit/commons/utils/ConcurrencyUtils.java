@@ -75,4 +75,15 @@ public final class ConcurrencyUtils
         }
         return defaultVal;
     }
+    
+    /**
+     * Destroy a thread group
+     * @param tGroup
+     */
+    public static void destroy(ThreadGroup tGroup) {
+        if(tGroup == null) return;
+        try{
+            tGroup.destroy();
+        }catch(Exception ex){}  //ignore anything
+    }
 }
