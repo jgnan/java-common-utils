@@ -47,6 +47,8 @@ public final class ShenStringUtils {
 	public static final String COLON = ":";
 	public static final String SEMICOLON = ";";
 	public static final String LINE_SEPERATOR = "\r\n";
+
+	public static final String ASTAR = "*";
 	
 	/**
 	 * 把字符串中所有符合样式的字串替换replacement的内容.

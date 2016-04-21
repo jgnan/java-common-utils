@@ -189,7 +189,7 @@ public class URLUtils {
      * @param conn
      * @param cookies
      */
-    public static void writerCookies(HttpURLConnection conn, Cookie[] cookies) {
+    public static void writerCookies(HttpURLConnection conn, Cookie... cookies) {
         if(ArrayUtils.isEmpty(cookies)){
             if(LOG.isDebugEnabled()) LOG.debug("[writerCookies] No cookie input");
             return;
@@ -217,7 +217,7 @@ public class URLUtils {
             if (LOG.isDebugEnabled()) LOG.debug("[writerHeaders] No headers input");
             return conn;
         }
-        conn.setDoOutput(true);
+//        conn.setDoOutput(true);
         for(String key : headers.keySet()){
             //XXX Maybe this would accept malicious codes
             conn.setRequestProperty(key, headers.getParam(key));

@@ -40,7 +40,7 @@ public final class IOStreamUtils {
         }
         StringBuilder builder = new StringBuilder();
         try {
-            conn.setDoInput(true);
+//            conn.setDoInput(true);
             readByLine(conn.getInputStream(),(line) -> {
                builder.append(line).append(ShenStringUtils.LINE_SEPERATOR);
                return true;

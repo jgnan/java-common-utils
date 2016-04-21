@@ -24,10 +24,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -147,9 +147,9 @@ public final class HttpUtils {
      * @param address
      * @return
      */
-    public static long testProxy(Proxy proxy,String address){
+    public static long testProxy(Proxy proxy,String address,int times){
         try {
-            return testProxy(proxy,new URL(address),0,0);
+            return testProxy(proxy,new URL(address),0,0,times);
         }
         catch (MalformedURLException e) {
             LOG.warn("[testProxy] Could not parse url -> {}", address,e);
@@ -165,9 +165,9 @@ public final class HttpUtils {
      * @param rTimeout 读取超时时间限制
      * @return
      */
-    public static long testProxy(Proxy proxy,String address,int cTimeout, int rTimeout){
+    public static long testProxy(Proxy proxy,String address,int cTimeout, int rTimeout,int testTimes){
         try {
-            return testProxy(proxy,new URL(address),cTimeout,rTimeout);
+            return testProxy(proxy,new URL(address),cTimeout,rTimeout,testTimes);
         }
         catch (MalformedURLException e) {
             LOG.warn("[testProxy] Could not parse url -> {}", address,e);
@@ -1339,7 +1339,7 @@ public final class HttpUtils {
      *            Proxy
      * @param url
      */
-    public static long testProxy(Proxy proxy, URL url,int ctimeout,int rtimeout) {
+    public static long testProxy(Proxy proxy, URL url,int ctimeout,int rtimeout,int testTimes) {
         if (proxy == null) return -1;
         if (url == null) {
             try {
@@ -1350,19 +1350,22 @@ public final class HttpUtils {
                 return -1;
             }
         }
-        URLConnection conn = null;
+        HttpURLConnection conn = null;
         try {
             StopWatch watch = new StopWatch();
             watch.start();
-            conn = url.openConnection(proxy);
+            conn = (HttpURLConnection) url.openConnection(proxy);
             if(ctimeout > 0) conn.setConnectTimeout(ctimeout);
             if(rtimeout > 0) conn.setReadTimeout(rtimeout);
-            conn.getInputStream(); // try to get input
+            long available = conn.getInputStream().available(); // try to get input
+            int code = conn.getResponseCode();
+            if(available < 1 || code != 200) return -1;    //no content get
             watch.stop();
             return watch.getTime();
         }
         catch (Exception e) {
             LOG.warn("[testProxy] Could not connect to proxy -> {}", proxy.address());
+            if(testTimes > 0) return testProxy(proxy, url,ctimeout,rtimeout,testTimes-1);
         }
         finally {
             if (conn != null) IOUtils.close(conn);
