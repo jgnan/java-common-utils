@@ -3,6 +3,7 @@ package com.shenit.commons.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,6 +20,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.shenit.commons.codec.io.ShenFileUtils;
 
 /**
  * IO Stream工具库.
@@ -261,6 +264,39 @@ public final class IOStreamUtils {
             LOG.warn("[write] Could not write content to connection due to error", e);
         }
         return conn;
+    }
+    
+    /**
+     * Save http content to file
+     * @param conn HTTP URL connection
+     * @param file File to save
+     * @return
+     */
+    public static boolean save(HttpURLConnection conn, String filePath){
+    	return save(conn,ShenFileUtils.createFileIfNeeded(filePath));
+    }
+    
+    /**
+     * Save http content to file
+     * @param conn HTTP URL connection
+     * @param file File to save
+     * @return
+     */
+    public static boolean save(HttpURLConnection conn, File file){
+    	try(OutputStream out = new FileOutputStream(file)){
+    		InputStream in = conn.getInputStream();
+    		byte[] buff = new byte[1024];
+    		int read = 0;
+    		while((read = in.read(buff)) > 0){
+    			out.write(buff,0,read);
+    		}
+    		out.flush();
+    	}catch(Exception ex){
+    		LOG.warn("[save] Save url content with exception.",ex);
+    		return false;
+    	}
+    	
+    	return true;
     }
 
     /**
