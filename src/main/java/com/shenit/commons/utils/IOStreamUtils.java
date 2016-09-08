@@ -40,6 +40,11 @@ public final class IOStreamUtils {
         }
         StringBuilder builder = new StringBuilder();
         try {
+            if(conn instanceof HttpURLConnection && ((HttpURLConnection)conn).getResponseCode() != 200){
+                HttpURLConnection httpConn = ((HttpURLConnection)conn);
+                LOG.warn("[read] Response with error code -> {}, msg -> {}",httpConn.getResponseCode(), httpConn.getResponseMessage());
+                return null;
+            }
 //            conn.setDoInput(true);
             readByLine(conn.getInputStream(),(line) -> {
                builder.append(line).append(ShenStringUtils.LINE_SEPERATOR);

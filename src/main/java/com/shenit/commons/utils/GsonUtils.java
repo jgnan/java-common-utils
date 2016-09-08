@@ -35,20 +35,35 @@ public final class GsonUtils {
     private static final Logger LOG = LoggerFactory.getLogger(GsonUtils.class);
     
 	private static final Gson GSON;
+	private static final Gson EXPOSE_ONLY_GSON;
 	static{
 		GSON = new GsonBuilder().
 		                enableComplexMapKeySerialization().
 		                excludeFieldsWithModifiers(Modifier.PRIVATE,Modifier.PROTECTED,Modifier.STATIC)
-		                .excludeFieldsWithoutExposeAnnotation()
 		                .create();
+		EXPOSE_ONLY_GSON = new GsonBuilder().
+                        enableComplexMapKeySerialization()
+                        .excludeFieldsWithoutExposeAnnotation()
+                        .create();
 	}
+	/**
+     * 把一个东西编译为json格式
+     * @param source 要编译的对象
+     * @param exposeAnnoFieldsOnly 是否只有Expose 标签的字段会被暴露
+     * @return 返回JSON字符串
+     */
+    public static String toJson(Object source){
+        return toJson(source,false);
+    }
 	/**
 	 * 把一个东西编译为json格式
 	 * @param source 要编译的对象
+	 * @param exposeAnnoFieldsOnly 是否只有Expose 标签的字段会被暴露
 	 * @return 返回JSON字符串
 	 */
-	public static String toJson(Object source){
-		return source == null ? null : GSON.toJson(source);
+	public static String toJson(Object source,boolean exposeAnnoFieldsOnly){
+		if(source == null) return null; 
+		return exposeAnnoFieldsOnly ? EXPOSE_ONLY_GSON.toJson(source) : GSON.toJson(source);
 	}
 	/**
 	 * 把字符串转换为指定类型.

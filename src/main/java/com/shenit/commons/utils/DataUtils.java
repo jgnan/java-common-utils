@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class DataUtils {
     private static final Logger LOG = LoggerFactory.getLogger(DataUtils.class);
+    public static final BigDecimal DECIMAL_ZERO = new BigDecimal(0);
 
     /**
      * 把多个参数组装成相同类型的数组
@@ -400,5 +401,21 @@ public final class DataUtils {
         }else{
             return new Boolean(obj.toString());
         }
+    }
+    
+    /**
+     * 转换成BigDecimal类型
+     * @param obj 对象值
+     * @param defaultVal 默认值
+     * @return
+     */
+    public static BigDecimal toDecimal(Object obj,BigDecimal defaultVal){
+        if(obj == null) return defaultVal;
+        try{
+            return new BigDecimal(obj.toString());
+        }catch(NumberFormatException ex){
+            return defaultVal;
+        }
+        
     }
 }

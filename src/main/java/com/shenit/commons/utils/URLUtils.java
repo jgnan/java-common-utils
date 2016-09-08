@@ -135,6 +135,17 @@ public class URLUtils {
      * @return
      * @throws IOException
      */
+    public static HttpURLConnection openConnection(URL url){
+        return openConnection(url, null, null,null,null,0,0);
+    }
+    
+    /**
+     * Http url connection
+     * @param url
+     * @param proxy
+     * @return
+     * @throws IOException
+     */
     public static HttpURLConnection openConnection(URL url, ShenHttpMethod method , Proxy proxy){
         return openConnection(url, method, null,null,proxy,0,0);
     }
@@ -225,13 +236,21 @@ public class URLUtils {
         return conn;
     }
     
+    public static URL url(String location){
+    	return url(location,null);
+    }
+    
     /**
      * Wrap a location to url
      * @param location
      * @return
      */
-    public static URL url(String location){
+    public static URL url(String location,ShenHttpParam params){
         if(StringUtils.isEmpty(location)) return null;
+        if(!MapUtils.isEmpty(params)){
+        	location += (location.indexOf(HttpUtils.QUERY_CHAR) > -1 ? 
+        			HttpUtils.AMP : HttpUtils.QUERY_CHAR) + params.toQuery();
+        }
         try {
             return new URL(location);
         }

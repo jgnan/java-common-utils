@@ -1,5 +1,6 @@
 package com.shenit.commons.utils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +27,9 @@ public final class MapUtils {
     private static final String PARAM_NAME_PREFIX2="-";
     private static final String PARAM_NAME_PATTERN="--?";
     private static final String PARAM_ASSIGN_CHAR="=";
-    
+
+    private static final BigDecimal CURRENCY_ZERO = BigDecimal.ZERO.setScale(2);
+
     /**
      * Filter maps' elements using the specific keys with orders
      * @param map Map object
@@ -39,6 +42,7 @@ public final class MapUtils {
         for(K key : filters) result.put(key,map.get(key));
         return result;
     }
+    
     /**
      * Check whether map contains a specific key
      * @param map
@@ -46,7 +50,7 @@ public final class MapUtils {
      * @return
      */
     public static <K,V> boolean contains(Map<K,V> map, K key){
-        return key != null && map.get(key) != null;
+        return key != null && map != null && map.get(key) != null;
     }
     
     /**
@@ -309,6 +313,81 @@ public final class MapUtils {
      */
     public static <K,V> String getString(Map<K,V> map, K key,String defaultVal) {
         return DataUtils.toString(get(map,key),defaultVal);
+    }
+    
+    /**
+     * 转换成Decimal类型
+     * @param map
+     * @param field
+     * @return
+     */
+    public static <K,V> BigDecimal getDecimal(Map<K, V> map, String field) {
+        return DataUtils.toDecimal(map.get(field),DataUtils.DECIMAL_ZERO);
+    }
+    
+    /**
+     * 转换成货币
+     * @param map
+     * @param field
+     * @return
+     */
+    public static <K,V> BigDecimal getCurrency(Map<K, V> map, K field) {
+        return getCurrency(map,field,CURRENCY_ZERO);
+    }
+    
+    /**
+     * 转换成货币
+     * @param map
+     * @param field
+     * @param defaultVal
+     * @return
+     */
+    public static <K,V> BigDecimal getCurrency(Map<K, V> map, K field, BigDecimal defaultVal) {
+        return getCurrency(map,field,defaultVal,BigDecimal.ROUND_CEILING);
+    }
+    
+    
+    /**
+     * 转换成货币
+     * @param map
+     * @param field
+     * @param defaultVal
+     * @return
+     */
+    public static <K,V> BigDecimal getCurrency(Map<K, V> map, K field, BigDecimal defaultVal,int roundUpMode) {
+        BigDecimal decimal = DataUtils.toDecimal(get(map,field),defaultVal);
+        return decimal == null ? CURRENCY_ZERO : decimal.setScale(2,roundUpMode);
+    }
+    
+    /**
+     * 转换成Decimal类型
+     * @param map
+     * @param field
+     * @param defaultVal
+     * @return
+     */
+    public static <K,V> BigDecimal getDecimal(Map<K, V> map, K field, BigDecimal defaultVal) {
+        return DataUtils.toDecimal(get(map,field),defaultVal);
+    }
+    /**
+     * Get integer from model
+     * @param map
+     * @param string
+     * @param object
+     * @return
+     */
+    public static Integer getInteger(Map<String, Object> map, String key) {
+        return getInteger(map,key,null);
+    }
+    /**
+     * Get integer from model
+     * @param map
+     * @param string
+     * @param object
+     * @return
+     */
+    public static Integer getInteger(Map<String, Object> map, String key, Integer defaultValue) {
+        return map == null ? defaultValue : DataUtils.toInt(map.get(key),defaultValue);
     }
     
     

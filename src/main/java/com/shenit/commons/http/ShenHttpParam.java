@@ -1,8 +1,12 @@
 package com.shenit.commons.http;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,6 +28,33 @@ public class ShenHttpParam extends LinkedHashMap<String,List<Object>>{
     
     public ShenHttpParam(Object... keysAndVals){
         addAll(keysAndVals);
+    }
+    
+    public ShenHttpParam(HttpServletRequest req){
+        if(req == null) return;
+        for(Enumeration<String> names = req.getParameterNames();names.hasMoreElements();){
+            String paramName = names.nextElement();
+            add(paramName,req.getParameter(paramName));
+        }
+    }
+    
+    public ShenHttpParam(ShenHttpParam params){
+    	if(params != null) putAll(params);
+    }
+    
+    /**
+     * 返回一个按key的字母顺序排好序的参数map
+     * @return
+     */
+    public ShenHttpParam orderedParams(){
+    	ShenHttpParam copy = new ShenHttpParam();
+    	List<String> keys = new ArrayList<>(keySet());
+    	// shuffle and sort
+    	Collections.shuffle(keys);
+    	Collections.sort(keys);
+    	
+    	for(String key : keys) copy.add(key, getParam(key));
+    	return copy;
     }
     
     /**

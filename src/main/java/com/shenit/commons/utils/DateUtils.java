@@ -53,6 +53,14 @@ public class DateUtils {
 		format = (StringUtils.isBlank(format) ? YMDHMS : format);
 		return inDate == null ? "" : new SimpleDateFormat(format).format(inDate);
 	}
+	
+	/**
+	 * Get current timestamp string.
+	 * @return
+	 */
+	public static String getNowStr(){
+	    return getDateTimeStr(YMDHMS, new Date());
+	}
 
 	/**
 	 *  从字符串转成日期

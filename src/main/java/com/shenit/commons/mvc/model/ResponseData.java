@@ -83,6 +83,17 @@ public class ResponseData implements Serializable,JsonSerializable{
 	}
 	
 	/**
+	 * Mark error message
+	 * @param message
+	 * @param params
+	 */
+	public ResponseData error(String message,Object... params){
+	    hasErrors = true;
+	    setMessage(message, MessageType.error, params);
+	    return this;
+	}
+	
+	/**
 	 * Set count to the record sets
 	 * @param count
 	 */
@@ -103,6 +114,7 @@ public class ResponseData implements Serializable,JsonSerializable{
 	 * @param records
 	 */
 	public ResponseData setRecords(Collection<?> records) {
+	    setCount(CollectionUtils.size(records));
 		set(FIELD_RECORDS,records);
 		return this;
 	}
