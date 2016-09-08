@@ -93,7 +93,7 @@ public final class IOStreamUtils {
      * @param file File location
      * @return
      */
-    public static FileWriter writerFile(String file){
+    public static FileWriter writeFile(String file){
         return writeFile(checkFileExists(file));
     }
     /**
