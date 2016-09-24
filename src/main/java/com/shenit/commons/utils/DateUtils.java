@@ -17,6 +17,17 @@ public class DateUtils {
 	public static final String YMD = "yyyy-MM-dd";
 	/** date format for cookie expire field */
 	public static final String COOKIE_DATE = "EEE, dd-MMM-yyyy HH:mm:ss zzz";
+	/** Milli second to one day */
+	public static final long ONE_DAY_MILLISEC = 1000 * 3600 * 24;
+	
+	//默认使用格林威治时间
+    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("GMT");
+    //DAY Field
+    public static final int MILLISECOND = 0;
+    public static final int SECOND = 1;
+    public static final int MINUTE = 2;
+    public static final int HOUR = 3;
+    public static final int DAY = 4;
 	/**
 	 * 字符串转换为date格式（默认格式化{@link #YMDHMS}）
 	 * @param date 字符串时间
@@ -102,8 +113,6 @@ public class DateUtils {
         return year*10000 + month*100 + day;
     }
 	
-	//默认使用格林威治时间
-    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("GMT");
     /**
      * 获取指定timezone地点的当前日期时间
      * @param zoneId 地点ID
@@ -289,4 +298,96 @@ public class DateUtils {
         cal.add(Calendar.DAY_OF_YEAR, i);
         return cal.getTime();
     }
+    
+    /**
+     * 过滤时间部分
+     * @param date
+     * @return
+     */
+    public static long purgeTime(long date){
+        return date / ONE_DAY_MILLISEC * ONE_DAY_MILLISEC;
+    }
+    
+    /**
+     * 过滤时间部分
+     * @param date
+     * @return
+     */
+    public static Date purgeTime(Date date){
+        return new Date(purgeTime(date.getTime()));
+    }
+
+    /**
+     * 根据timestamp生成
+     * @param ts
+     * @return
+     */
+    public static Date date(Long ts) {
+        return ts == null ? null : new Date(ts);
+    }
+    
+    /**
+     * 判断日期对象是否在当前时间偏移指定时间量后的日期之前
+     * @param date 日期
+     * @param range 对比值
+     * @param type 对比类型，和对比值决定偏移范围， 取值为MILLISECOND, SECOND, MINUTE, HOUR, 或者 DAY
+     * @return 如果date在当前日期的偏移量之前，返回true，否则返回false
+     */
+    public static boolean noMoreThan(Date date, int range, int type){
+        return date == null ? false : compare(date.getTime(), range, type, -1);
+    }
+    
+    /**
+     * 判断日期对象是否在当前时间偏移指定时间量后的日期之后
+     * @param date 日期
+     * @param range 对比值
+     * @param type 对比类型，和对比值决定偏移范围， 取值为MILLISECOND, SECOND, MINUTE, HOUR, 或者 DAY
+     * @return 如果date在当前日期的偏移量之后，返回true，否则返回false
+     */
+    public static boolean moreThan(Date date, int range, int type){
+        return date == null ? false : compare(date.getTime(), range, type, 1);
+    }
+    
+    /**
+     * 判断日期对象是否和当前时间偏移指定时间量后的日期相等
+     * @param ts 时间戳
+     * @param range 对比值
+     * @param type 对比类型，和对比值决定偏移范围， 取值为MILLISECOND, SECOND, MINUTE, HOUR, 或者 DAY
+     * @return 如果ts在当前日期的偏移量之前，返回true，否则返回false
+     */
+    public static boolean noMoreThan(long ts, int range, int type){
+        return compare(ts, range, type, -1);
+    }
+    
+    /**
+     * 判断日期对象是否和当前时间偏移指定时间量后的日期相等
+     * @param ts 时间戳
+     * @param range 对比值
+     * @param type 对比类型，和对比值决定偏移范围， 取值为MILLISECOND, SECOND, MINUTE, HOUR, 或者 DAY
+     * @return 如果ts在当前日期的偏移量之后，返回true，否则返回false
+     */
+    public static boolean moreThan(long ts, int range, int type){
+        return compare(ts, range, type, 1);
+    }
+    
+    
+    /*
+     * 对比时间搓和值之间的区别
+     * @param ts - 要比较的时间搓
+     * @param range - 要对比的值， 需要和type结合使用
+     * @param compareType - 对比类型， > 0 判断ts是否大于range; <0 判断ts是否小于range
+     */
+    private static boolean compare(long ts, int range, int type, int compareType){
+        int ms = 1;
+        long now = System.currentTimeMillis();
+        switch(type){
+        case DAY: ms *= 24;
+        case HOUR: ms *= 60;
+        case MINUTE: ms *= 60;
+        case MILLISECOND:
+        case SECOND: ms *= 1000;
+        }
+        return compareType > 0 ? ts > now + range * ms : ts < now + range * ms; 
+    }
+    
 }

@@ -37,6 +37,8 @@ public final class Formatter {
 	
 
 	public static final DateFormat DATETIME_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static final DateFormat DATE1_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+	public static final DateFormat DATE2_FORMATTER = new SimpleDateFormat("yyyy/MM/dd");
 	
 	/**
 	 * 格式化价格
@@ -49,17 +51,27 @@ public final class Formatter {
 	}
 	
 	/**
+	 * Parse string to date using full datetime
 	 * @param notifyDateStr
 	 * @return
 	 */
 	public static Date parseDate(String notifyDateStr) {
+	    return parseDate(notifyDateStr,null);
+	}
+	
+	/**
+	 * @param notifyDateStr
+	 * @return
+	 */
+	public static Date parseDate(String notifyDateStr,DateFormat formatter) {
 		if(StringUtils.isEmpty(notifyDateStr)) return null;
 		try {
-			return DATETIME_FORMATTER.parse(notifyDateStr);
+			return (formatter == null ? DATETIME_FORMATTER : formatter).parse(notifyDateStr);
 		} catch (ParseException e) {
 			LOG.warn("[parseDate] illegal date string: {}",notifyDateStr);
 		}
 		return null;
 	}
+	
 	
 }

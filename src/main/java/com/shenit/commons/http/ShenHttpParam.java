@@ -1,10 +1,9 @@
 package com.shenit.commons.http;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +21,7 @@ import com.shenit.commons.utils.ShenStringUtils;
  * @author jiangnan
  *
  */
-public class ShenHttpParam extends LinkedHashMap<String,List<Object>>{
+public class ShenHttpParam extends TreeMap<String,List<Object>>{
     private static final long serialVersionUID = 8036452208953720373L;
     private static final Logger LOG = LoggerFactory.getLogger(ShenHttpParam.class);
     
@@ -40,21 +39,6 @@ public class ShenHttpParam extends LinkedHashMap<String,List<Object>>{
     
     public ShenHttpParam(ShenHttpParam params){
     	if(params != null) putAll(params);
-    }
-    
-    /**
-     * 返回一个按key的字母顺序排好序的参数map
-     * @return
-     */
-    public ShenHttpParam orderedParams(){
-    	ShenHttpParam copy = new ShenHttpParam();
-    	List<String> keys = new ArrayList<>(keySet());
-    	// shuffle and sort
-    	Collections.shuffle(keys);
-    	Collections.sort(keys);
-    	
-    	for(String key : keys) copy.add(key, getParam(key));
-    	return copy;
     }
     
     /**

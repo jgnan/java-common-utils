@@ -38,4 +38,11 @@ public class BatchResultResponse implements Serializable{
         this.data = data;
     }
     
+    public BatchResultResponse merge(BatchResultResponse result){
+        if(result == null) return this;
+        errorCount += result.errorCount;
+        successCount += result.successCount;
+        message = result.message;
+        return this;
+    }
 }

@@ -212,12 +212,11 @@ public final class IOStreamUtils {
                 LOG.warn("[readBuffer] Nothing to read.");
                 return null;
             }
-        }
-        catch (IOException e) {
+            return readBuffer(new InputStreamReader(is,"UTF-8"));
+        }catch (IOException e) {
             LOG.warn("[readBuffer] exception throws when trying to read stream",e);
             return null;
         }
-        return readBuffer(new InputStreamReader(is));
     }
     
     /**
