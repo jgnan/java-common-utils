@@ -65,6 +65,18 @@ public final class ShenStringUtils {
 	}
 	
 	/**
+	 * 如果末尾不是以某个字符串为结尾，则加上结尾并且返回
+	 * @param source
+	 * @param suffix
+	 * @return
+	 */
+	public static String appendIfNotEndsWith(String source, String suffix){
+	    if(StringUtils.isEmpty(source)) return suffix;
+	    else if(source.endsWith(suffix) || StringUtils.isEmpty(suffix)) return source;
+	    return source + suffix;
+	}
+	
+	/**
 	 * To camel format
 	 * @param str
 	 * @return

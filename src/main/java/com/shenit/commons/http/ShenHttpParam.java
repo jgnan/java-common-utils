@@ -1,8 +1,10 @@
 package com.shenit.commons.http;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.shenit.commons.utils.ArrayUtils;
 import com.shenit.commons.utils.DataUtils;
+import com.shenit.commons.utils.GsonUtils;
 import com.shenit.commons.utils.HttpUtils;
 import com.shenit.commons.utils.ShenStringUtils;
 
@@ -27,6 +30,12 @@ public class ShenHttpParam extends TreeMap<String,List<Object>>{
     
     public ShenHttpParam(Object... keysAndVals){
         addAll(keysAndVals);
+    }
+    
+    public ShenHttpParam(Map<String,Object> objs){
+        for(String key : objs.keySet()){
+            add(key, objs.get(key));
+        }
     }
     
     public ShenHttpParam(HttpServletRequest req){
@@ -135,5 +144,33 @@ public class ShenHttpParam extends TreeMap<String,List<Object>>{
         //remove last & character
         if(builder.length() > 0) builder = builder.deleteCharAt(builder.length()-1);
         return builder.toString();
+    }
+
+    /**
+     * Get as Integer
+     * @param key
+     * @return
+     */
+    public Integer getInteger(String key) {
+        return DataUtils.toInt(getParam(key));
+    }
+
+    /**
+     * Get Json object.
+     * @param key
+     * @param clazz
+     * @return
+     */
+    public <T> T getJson(String key, Class<T> clazz) {
+        return GsonUtils.fromJson(getParam(key), clazz);
+    }
+    /**
+     * Get by type.
+     * @param key
+     * @param type
+     * @return
+     */
+    public <T> T getJson(String key, Type type) {
+        return GsonUtils.fromJson(getParam(key), type);
     }
 }

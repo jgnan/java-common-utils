@@ -995,7 +995,8 @@ public final class HttpUtils {
         char column = ':', rtn = '\n', space = ' ';
         StringBuilder builder = new StringBuilder(req.getMethod());
         builder.append(space).append(req.getURI()).append(space)
-                        .append(req.getProtocolVersion());
+                        .append(req.getProtocolVersion()).append(rtn).append(rtn);
+        builder.append("HEADERS:\n");
         Header[] headers = req.getAllHeaders();
         int length = headers.length;
         for (int i = 0; i < length; i++) {

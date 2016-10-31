@@ -282,8 +282,8 @@ public class DateUtils {
      * @param i 增量
      * @return
      */
-    public static long addDays(long currentTime, int i) {
-        return currentTime + i * 86400000l;
+    public static Date addDays(long currentTime, int i) {
+        return new Date(currentTime + i * 86400000l);
     }
     
     /**
