@@ -345,7 +345,7 @@ public class DateUtils {
      * @return 如果date在当前日期的偏移量之后，返回true，否则返回false
      */
     public static boolean moreThan(Date date, int range, int type){
-        return date == null ? false : compare(date.getTime(), range, type, 1);
+        return date == null ? false : compare(date.getTime(), range, type, -1);
     }
     
     /**
